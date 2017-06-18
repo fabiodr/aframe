@@ -46,6 +46,12 @@ module.exports.Component = registerComponent('cursor', {
     this.intersection = null;
     this.intersectedEl = null;
 
+    // Wait for canvas to load.
+		if(!this.isCanvasReady()) {
+			this.el.sceneEl.addEventListener('render-target-loaded', bind(this.init, this));
+			return;
+		}
+
     // Bind methods.
     this.onCursorDown = bind(this.onCursorDown, this);
     this.onCursorUp = bind(this.onCursorUp, this);
@@ -54,6 +60,10 @@ module.exports.Component = registerComponent('cursor', {
   },
 
   play: function () {
+		if(!this.isCanvasReady()) {
+			return;
+		}
+
     this.addEventListeners();
   },
 
@@ -113,6 +123,10 @@ module.exports.Component = registerComponent('cursor', {
     el.removeEventListener('raycaster-intersection', this.onIntersection);
     el.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
   },
+
+  isCanvasReady: function() {
+		return !!this.el.sceneEl.canvas;
+	},
 
   /**
    * Trigger mousedown and keep track of the mousedowned entity.
